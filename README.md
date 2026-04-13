@@ -23,3 +23,11 @@ Ein futuristisches, modulares Dashboard-Design für [Fastfetch](https://github.c
    mkdir -p ~/.config/fastfetch/
    cp config.jsonc ~/.config/fastfetch/
    cp Bild02.png ~/.config/fastfetch/
+
+---
+## 📝 Denkstütze: Änderungen hochladen
+*Falls ich etwas am Design oder Code ändere, sind das meine Befehle:*
+
+1. \`git add .\`  
+2. \`git commit -m "Update: [Was habe ich geändert?]"\`  
+3. \`git push\`
