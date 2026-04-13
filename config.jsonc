@@ -1,0 +1,93 @@
+{
+    "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+    "logo": {
+        "source": "~/.config/fastfetch/Bild02.png",
+        "type": "kitty",
+        "width": 25,
+        "padding": {
+            "right": 12,
+            "left": 8,
+            "top": 2
+        }
+    },
+    "display": {
+        "separator": " ──╼ ",
+        "color": {
+            "keys": "magenta",
+            "title": "magenta"
+        },
+        "bar": {
+            "char": {
+                "elapsed": "█",
+                "remaining": "░"
+            },
+            "width": 15
+        }
+    },
+    "modules": [
+        // --- BOX 0: HEADER ---
+        { "type": "custom", "format": "╭──────────────────────────────────────────────────╮" },
+        { "type": "custom", "format": "│ \u001b[30;45m          [ CyberCore @ Home-Server ]          \u001b[0m │" },
+        { "type": "custom", "format": "├──────────────────────────────────────────────────┤" },
+        { "key": "│  OS      ", "keyColor": "green", "type": "os" },
+        { "key": "│ 󰌢 Host    ", "keyColor": "green", "type": "host", "format": "AIO Workstation" },
+        { "key": "│  Kernel  ", "keyColor": "green", "type": "kernel" },
+        { "key": "│ 󱎫 Uptime  ", "keyColor": "green", "type": "uptime" },
+        { "type": "custom", "format": "╰──────────────────────────────────────────────────╯" },
+
+        { "type": "custom", "format": "" },
+
+        // --- BOX 1: SOFTWARE & NETWORK (Korrigiert für Detail-Ansicht) ---
+        { "type": "custom", "format": "╭── Software & Network ─────────────────────────────╮" },
+        { "key": "│ 󰏖 Packages", "keyColor": "magenta", "type": "packages" },
+        // Unterteilung wie in deinem Screenshot gewünscht
+        { "key": "│  ├─ Pacman", "keyColor": "yellow", "type": "packages", "format": "{1}", "driver": "pacman" },
+        { "key": "│  ├─ AUR   ", "keyColor": "cyan", "type": "packages", "format": "{1}", "driver": "aur" },
+        { "key": "│  └─ Flatpk", "keyColor": "red", "type": "packages", "format": "{1}", "driver": "flatpak" },
+        // Netzwerk-IP hinzugefügt
+        { "key": "│ 󰖟 Network ", "keyColor": "blue", "type": "localip", "format": "{1} ({ifname})" },
+        { "type": "custom", "format": "╰──────────────────────────────────────────────────╯" },
+
+        { "type": "custom", "format": "" },
+
+        // --- BOX 2: HARDWARE ---
+        { "type": "custom", "format": "╭── Hardware Resources ────────────────────────────╮" },
+        {
+            "type": "command",
+            "key": "│  CPU     ",
+            "keyColor": "yellow",
+            "text": "read _ u n s i io irq sirq st g gn < /proc/stat; t1=$((u+n+s+i+io+irq+sirq+st)); id1=$((i+io)); sleep 0.15; read _ u n s i io irq sirq st g gn < /proc/stat; t2=$((u+n+s+i+io+irq+sirq+st)); id2=$((i+io)); dt=$((t2-t1)); did=$((id2-id1)); p=$((100*(dt-did)/dt)); awk -v p=\"$p\" 'BEGIN {w=15; f=int(p*w/100); bar=\"\"; for (i=1; i<=w; i++) bar=bar ((i<=f) ? \"█\" : \"░\"); print bar \" \" p \"%\"}'"
+        },
+        {
+            "type": "command",
+            "key": "│  RAM     ",
+            "keyColor": "yellow",
+            "text": "awk '/MemTotal:/ {t=$2} /MemAvailable:/ {a=$2} END {p=int(((t-a)*100)/t); w=15; f=int(p*w/100); bar=\"\"; for (i=1; i<=w; i++) bar=bar ((i<=f) ? \"█\" : \"░\"); print bar \" \" p \"%\"}' /proc/meminfo"
+        },
+        { "type": "command", "key": "│ 󰋊 Cloud   ", "keyColor": "yellow", "text": "df /mnt/cloud | awk 'NR==2 {p=$5; sub(/%/,\"\",p); w=15; f=int(p*w/100); bar=\"\"; for (i=1; i<=w; i++) bar=bar ((i<=f) ? \"█\" : \"░\"); print bar \" \" p \"%\"}'" },
+        { "type": "command", "key": "│ 󰋊 PassW   ", "keyColor": "yellow", "text": "df /mnt/PassW | awk 'NR==2 {p=$5; sub(/%/,\"\",p); w=15; f=int(p*w/100); bar=\"\"; for (i=1; i<=w; i++) bar=bar ((i<=f) ? \"█\" : \"░\"); print bar \" \" p \"%\"}'" },
+        { "type": "custom", "format": "╰──────────────────────────────────────────────────╯" },
+
+        { "type": "custom", "format": "" },
+
+        // --- BOX 3: SERVICES ---
+        { "type": "custom", "format": "╭── Self-Hosted Services ──────────────────────────╮" },
+        { "type": "command", "key": "│ 󰄄 Immich  ", "keyColor": "magenta", "text": "du -sh /mnt/cloud 2>/dev/null | awk '{print $1}' || echo 'n/a'" },
+        { "type": "command", "key": "│ 󰟵 Vault   ", "keyColor": "magenta", "text": "du -sh /mnt/PassW 2>/dev/null | awk '{print $1}' || echo 'n/a'" },
+        { "type": "custom", "format": "╰──────────────────────────────────────────────────╯" },
+
+        { "type": "custom", "format": "" },
+
+        // --- BOX 4: EXTERNAL ---
+        { "type": "custom", "format": "╭──  External Info  ───────────────────────────────╮" },
+        {
+            "type": "command",
+            "key": "│ 󰖐 Weather ",
+            "keyColor": "cyan",
+            "text": "temp=$(curl -s 'wttr.in?format=%t' | grep -oE '[-+]?[0-9]+'); [ -z \"$temp\" ] && temp=0; awk -v t=\"$temp\" 'BEGIN {w=15; max=40; f=int(t*w/max); if(f>w)f=w; if(f<0)f=0; bar=\"\"; for(i=1;i<=w;i++) bar=bar ((i<=f)?\"█\":\"░\"); print bar \" \" t \"°C\"}'"
+        },
+        { "type": "custom", "format": "╰──────────────────────────────────────────────────╯" },
+
+        "colors"
+    ]
+}
